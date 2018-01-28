@@ -1,0 +1,164 @@
+@import "layout/layout";
+
+// 在使用grid中，所有的columns指代的都是宽度（列），所有的rows指代的都是高（行）
+.grid{
+	display: grid;
+
+	/******基础一*********/
+	// grid-template属性设置了item的宽高高度，第一参数设置第一个item，第二个则设置第二个，以此类推
+	grid-template-rows: 50px 100px;
+	// grid-template-columns:50px 10px 80px;
+	// 类似于flexbox中的flex，表示将整列分为四分，1，2，3分别占比（也可以混用：100px 25% 10rem）
+	// minmax()设置一个最小值和最大值，repeat()设置重复
+	// 值得注意的是，grid-template-columns决定了多少个块显示在同一列，如果只有3个参数或者只repeat3，那么则只有三块元素在同一列
+	grid-template-columns:repeat(3,minmax(100px, 2fr));
+	grid-template:repeat(2,50px) /repeat(3,minmax(100px, 2fr));
+
+	grid-auto-rows:100px;//详见基础四
+
+	/******基础二*********/
+	// gap设置了列与列或行与行之间的间距，可以简写为grid-gap
+	//grid-column-gap:10px;
+	//grid-row-gap:10px;
+	grid-gap:10px;
+
+	/******基础三*********/
+	// 如果我想让item1放到第二行中间，能不能实现？
+	// 当然是可以的，grid的网格线提供了那么一种方法
+	// 这段话到底什么意思呢？列和行：从第二个开始到第三个结束
+	// 如果想放到第二行的第一位，那就是：grid-row-start: 2;grid-row-end: 3;grid-column-start: 1;grid-column-end: 2;
+	// 改样式可以简写，grid-row:2/3;grid-column:2/3;
+	// 还可以简写成一个：grid-area:2/3/2/3;不过要注意的是，第一个值对应grid-row-start，第二个值对应grid-column-start，第三个值对应grid-row-end和第四个值对应grid-column-end
+	.item1{
+		/*grid-row-start: 2;
+		grid-row-end: 3;
+		grid-column-start: 2;
+		grid-column-end: 3;*/
+
+		/*grid-row:2/3;
+		grid-column:2/3;*/
+
+		grid-area:2/2/3/3;
+	}
+
+	/******拓展一********/
+	// 那现在我司产品经理又有个奇葩需求，要item1占满2行，有没有办法呢？
+	// 我建议先把他打一顿再明确的告诉他：有！
+	// 通过基础三的属性就可以办到
+	.item1{
+		grid-area:1/2/3/3;
+	}
+	
+	// 同理的，如果想占据2列+2行
+	.item1{
+		grid-area:1/2/3/4;
+	}
+
+	// 你有没有发现，这样写好难记噢，我一个懒逼真记不住啊
+	// 没关系，有个span方法可以帮你
+	// span的后面紧随要合并的列（行）数
+	.item1{
+		grid-row:1 / span 2;
+		grid-column:2 / span2;
+	}
+
+	/******基础四*********/
+	// 命名这一块我决定暂时放掉，感兴趣的可以自己查阅下文档
+	// 大家有没有发现一个问题，按照现在的布局item4,5,6其实都是默认的高度，这个高度我希望默认可以是100px，有没有办法呢
+	// grid-auto-rows就解决了隐式网格的大小问题
+	.grid{
+		grid-auto-rows:100px;
+	}
+	// 实际上你会发现，并没有生效，所以在设置grid-auto-rows时，请和grid-template在一起设置
+
+	/******其它*********/
+	// 其它的还有比如隐式网格的命名啊、网格的对其方式啊、项目的对其方式啊暂时先不说啦
+	// 感兴趣的可以到这里学习一下
+
+	background: green;
+	.item{
+		background: white;
+	}
+	.item1{
+		background: red;
+	}
+	.item3{
+		background: yellow;
+	}
+	.item4{
+		background: #CCFFFF;
+	}
+	.item3{
+		background: #0099CC;
+	}
+	.item3{
+		background: #CCCCCC;
+	}
+}
+
+/******关于实战*********/
+// 基于grid的网格布局实际上如果配合css的@media媒体查询以及flexbox良好的布局设计就可以轻松实现自适应的问题了
+// 下面就是我的实战练习
+.status{
+	padding:50px 0;
+	text-align: center;
+}
+
+.grid-demo{
+	width: 90%;
+	max-width: 1240px;
+	padding-bottom: 100px;
+	margin:0 auto;
+	/*1024px*/
+	.grid-box{
+		display: grid;
+		grid-template:auto / 1fr;
+		grid-gap:20px;
+		.child{
+			a{
+				min-height: 100%;
+				box-shadow: 0px 2px 5px rgba(0,0,0,.1);
+				@include flex(baseline);
+				flex-direction: column;
+				position: relative;
+				transition: all .1s ease-in;
+				&:hover{
+					top: -2px;
+					box-shadow: 0px 4px 5px rgba(0,0,0,.2);
+				}
+				.bg{
+					width: 100%;
+					height: 120px;
+					background: #CCCC99;
+				}
+				article{
+					width: 100%;
+					padding:20px;
+					display: flex;
+				    flex-direction: column;
+				    flex: 1;
+				    justify-content: space-between;
+				    span{
+				    	font-size: 14px;
+				    	color: #ccc;
+				    }
+				}
+			}
+		}
+	}
+	/*500px*/
+	@media only screen and (min-width: 500px){
+		.grid-box{
+			grid-template-columns:repeat(2,1fr);
+			.child1{
+				grid-column:1 / span 2;
+			}
+		}
+	}
+	/*820px*/
+	@media only screen and (min-width: 850px){
+		.grid-box{
+			grid-template-columns:repeat(4,1fr);
+		}
+	}
+}
